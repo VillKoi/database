@@ -1,0 +1,727 @@
+openapi: 3.0.3
+info:
+  title: ЖКХ internal API
+  version: 1.0.0
+  description: API для работы с заявками ЖКХ.
+  contact:
+    name: ...
+
+servers:
+  - url: https://application.ru/api/gkh/v1
+    description: development server
+
+tags:
+  - name: application
+    description: Операции для работы с заявками.
+  - name: user
+    description: Операции для работы с пользователями.
+
+paths:
+
+  /application:
+    post:
+      tags:
+        - application
+      operationId: createApplication
+      summary: Создание заявки.
+      requestBody:
+        description: Заявка, которую нужно создать.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateApplicationPayload'
+      responses:
+        '200':
+          description: Успешный ответ.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationResponse"
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '401':
+          description: not authorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /application/{applicationId}:
+    parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags:
+        - application
+      operationId: getApplication
+      summary: Получение заявки по идентификатору.
+      description: Получение заявки по идентификатору.
+      responses:
+        '200':
+          description: Успешный ответ.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationResponse"
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '401':
+          description: not authorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    patch:
+      tags:
+        - application
+      operationId: updateApplication
+      summary: Редактирование заявки.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateApplicationPayload'
+      responses:
+        '200':
+          description: Успешный ответ.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationResponse"
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '401':
+          description: not authorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /applications:
+    get:
+      tags:
+        - application
+      operationId: listApplications
+      summary: Получение списка заявок.
+      description: Получение списка заявок.
+      parameters:
+        - name: performer_id
+          in: query
+          required: false
+          description: Идентификаторы иссполнителей, по которым нужно получить заявки.
+          schema:
+            type: string
+            format: uuid
+        - name: creator_id
+          in: query
+          required: false
+          description: Идентификаторы создателей, по которым нужно получить заявки.
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          required: false
+          description: Получение заявок по статусу
+          schema:
+            $ref: "#/components/schemas/ApplicationStatus"
+        - name: type
+          in: query
+          required: false
+          description: Получение заявок по типу
+          schema:
+            type: string
+            format: uuid
+        - $ref: "#/components/parameters/pagination"
+        - $ref: "#/components/parameters/sort"
+      responses:
+        '200':
+          description: Успешный ответ.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListApplicationResponse"
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '401':
+          description: not authorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /user:
+    post:
+      tags:
+        - user
+      operationId: createUser
+      summary: Создание пользователя.
+      requestBody:
+        description: Пользователь, которую нужно создать.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserPayload'
+      responses:
+        '200':
+          description: Успешный ответ.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '401':
+          description: not authorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /user/{userId}:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags:
+        - user
+      operationId: getUser
+      summary: Получение пользователя по идентификатору.
+      description: Получение пользователя по идентификатору.
+      responses:
+        '200':
+          description: Успешный ответ.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '401':
+          description: not authorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    delete:
+      tags:
+        - user
+      operationId: deleteUser
+      summary: Удаление пользователя.
+      description: Удаление статьи.
+      responses:
+        '200':
+          description: success
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '401':
+          description: not authorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /users:
+    get:
+      tags:
+        - user
+      operationId: listUsers
+      summary: Получение списка пользователей.
+      description: Получение списка статей.
+      parameters:
+        - name: performer_id
+          in: query
+          required: false
+          description: Идентификаторы хабов, по которым нужно получить статьи.
+          schema:
+            type: array
+            items:
+              type: string
+              format: uuid
+        - name: creator_id
+          in: query
+          required: false
+          description: Идентификаторы авторов, по которым нужно получить статьи.
+          schema:
+            type: string
+            format: uuid
+        - name: role
+          in: query
+          required: false
+          description: Получение пользоваеля по роли
+          schema:
+            $ref: "#/components/schemas/UserRole"
+        - name: search
+          in: query
+          required: false
+          description: Получение статей по строке
+          schema:
+            type: string
+        - $ref: "#/components/parameters/pagination"
+        - $ref: "#/components/parameters/sort"
+      responses:
+        '200':
+          description: Успешный ответ.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListUsersResponse"
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '401':
+          description: not authorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /applications/types:
+    get:
+      tags:
+        - application
+      operationId: listApplicationTypes
+      summary: Получение списка типов заявок.
+      description: Получение списка типов заявок.
+      parameters:
+        - name: search
+          in: query
+          required: false
+          description: Получение статей по строке
+          schema:
+            type: string
+        - $ref: "#/components/parameters/pagination"
+        - $ref: "#/components/parameters/sort"
+      responses:
+        '200':
+          description: Успешный ответ.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListApplicationTypes"
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '401':
+          description: not authorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /applications/subtypes:
+    get:
+      tags:
+        - application
+      operationId: listApplicationSubTypes
+      summary: Получение списка подтипов заявок.
+      description: Получение списка подтипов заявок.
+      parameters:
+        - name: typeId
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: search
+          in: query
+          required: false
+          description: Получение статей по строке
+          schema:
+            type: string
+        - $ref: "#/components/parameters/pagination"
+        - $ref: "#/components/parameters/sort"
+      responses:
+        '200':
+          description: Успешный ответ.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListApplicationSubtypes"
+        '500':
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '401':
+          description: not authorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+        details:
+          type: string
+
+    ResponseMetaTotal:
+      description: Полное количество элементов, попадающих под параметра запроса.
+      type: object
+      required:
+        - total
+      properties:
+        total:
+          type: integer
+
+    CreateApplicationPayload:
+      type: object
+      description: Параметры запроса на создание заявки.
+      required:
+        - text
+        - type
+        - subtype
+      properties:
+        text:
+          type: string
+        type:
+          type: string
+        subtype:
+          type: string
+        photo_ids:
+          type: array
+          items:
+            type: string
+            format: uuids
+
+    ApplicationStatus:
+      type: string
+      enum:
+        - created
+        - in_progress
+        - done
+
+    UpdateApplicationPayload:
+      type: object
+      description: Параметры запроса на редактирование пользователя.
+      properties:
+        status:
+          $ref: "#/components/schemas/ApplicationStatus"
+        performer_id:
+          type: string
+          format: uuid
+        performer_time:
+          type: string
+          format: date-time
+
+    ApplicationResponse:
+      type: object
+      description: Сущность заявки
+      required:
+        - id
+        - created_at
+        - creator_id
+        - updated_at
+        - status
+        - type
+        - subtype
+        - text
+        - photo_ids
+      properties:
+        id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        creator_id:
+          type: string
+          format: uuid
+        updated_at:
+          type: string
+          format: date-time
+        status:
+          $ref: "#/components/schemas/ApplicationStatus"
+        type:
+          type: string
+          format: uuid
+        subtype:
+          type: string
+          format: uuid
+        text:
+          type: string
+        photo_ids:
+          type: array
+          items:
+            type: string
+            format: uuids
+        performer_id:
+          type: string
+          format: uuid
+        performer_at:
+          type: string
+          format: date-time
+
+    ListApplicationResponse:
+      type: object
+      description: Ответ на запрос на получение списка заявок.
+      required:
+        - data
+        - meta
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApplicationResponse"
+        meta:
+          $ref: "#/components/schemas/ResponseMetaTotal"
+
+    UserRole:
+      type: string
+      enum:
+        - user
+        - moderator
+        - worker
+
+    CreateUserPayload:
+      type: object
+      description: c
+      required:
+        - first_name
+        - last_name
+        - phone
+        - role
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        phone:
+          type: string
+        role:
+          $ref: "#/components/schemas/UserRole"
+
+    UserResponse:
+      type: object
+      description: Сущность пользователя.
+      required:
+        - id
+        - created_at
+        - first_name
+        - last_name
+        - phone
+        - role
+      properties:
+        id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        first_name:
+          type: string
+        last_name:
+          type: string
+        role:
+          $ref: "#/components/schemas/UserRole"
+        phone:
+          type: string
+
+    ListUsersResponse:
+      type: object
+      description: Ответ на запрос на получение списка пользователей.
+      required:
+        - data
+        - meta
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserResponse"
+        meta:
+          $ref: "#/components/schemas/ResponseMetaTotal"
+
+    ApplicationType:
+      type: object
+      description: Сущность пользователя.
+      required:
+        - id
+        - title
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+
+    ApplicationSubtype:
+      type: object
+      description: Сущность пользователя.
+      required:
+        - id
+        - title
+        - type
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        type:
+          type: string
+          format: uuid
+
+    ListApplicationTypes:
+      type: object
+      description: Ответ на запрос на получение списка пользователей.
+      required:
+        - data
+        - meta
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApplicationType"
+        meta:
+          $ref: "#/components/schemas/ResponseMetaTotal"
+
+    ListApplicationSubtypes:
+      type: object
+      description: Ответ на запрос на получение списка пользователей.
+      required:
+        - data
+        - meta
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApplicationSubtype"
+        meta:
+          $ref: "#/components/schemas/ResponseMetaTotal"
+
+  parameters:
+    # Пагинация
+    pagination:
+      name: pagination
+      in: query
+      required: false
+      explode: true
+      style: deepObject
+      schema:
+        type: object
+        required:
+          - limit
+          - offset
+        properties:
+          limit:
+            description: Количество элементов на странице.
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 25
+          offset:
+            description: Количество элементов, которые нужно пропустить от начала списка.
+            type: integer
+            minimum: 0
+            default: 0
+
+    # Сортировка
+    sort:
+      name: sort
+      in: query
+      required: false
+      explode: true
+      style: deepObject
+      schema:
+        type: object
+        required:
+          - sortOrder
+          - sortKey
+        properties:
+          sortOrder:
+            description: Возможные значения порядка сортировки.
+            type: string
+            enum:
+              - asc
+              - desc
+          sortKey:
+            description: Свойство, по которому нужно сортировать массив.
+            type: string
+
+
+
+
+
+
